@@ -60,6 +60,10 @@ export default memo(function Login(props) {
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           form={form}
+          initialValues={{
+            username: "admin",
+            password: "admin"
+          }}
         >
           <Form.Item
             label="Username"
@@ -76,7 +80,6 @@ export default memo(function Login(props) {
                 message: "用户名必须由英文、字母、下划线组成"
               }
             ]}
-            initialValue="admin"
           >
             <Input />
           </Form.Item>
@@ -90,7 +93,6 @@ export default memo(function Login(props) {
                 validator: validatorPwd
               }
             ]}
-            initialValue="admin"
           >
             <Input.Password />
           </Form.Item>

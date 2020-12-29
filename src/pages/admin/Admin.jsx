@@ -17,7 +17,14 @@ export default memo(function Admin(props) {
       </Sider>
       <Layout>
         <LQHeader />
-        <Content style={{ backgroundColor: "#fff", margin: "20px" }}>
+        <Content
+          style={{
+            backgroundColor: "#fff",
+            margin: "20px",
+            height: 572.8,
+            overflowY: "auto"
+          }}
+        >
           {renderRoutes(props.route.routes)}
         </Content>
         <Footer style={{ textAlign: "center", color: "#ccc" }}>

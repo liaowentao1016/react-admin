@@ -3,7 +3,7 @@ import axios from "axios";
 
 // 创建axios实例
 const request = axios.create({
-  baseURL: "http://120.55.193.14:5000",
+  baseURL: "",
   timeout: 5000
 });
 
