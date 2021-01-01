@@ -1,5 +1,7 @@
 import React, { memo } from "react";
 
-export default memo(function LQGoods() {
-  return <div>Goods</div>;
+import { renderRoutes } from "react-router-config";
+
+export default memo(function LQGoods(props) {
+  return <>{renderRoutes(props.route.routes)}</>;
 });

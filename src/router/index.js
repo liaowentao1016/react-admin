@@ -15,6 +15,15 @@ const LQBar = React.lazy(() => import("@/pages/charts/Bar.jsx"));
 const LQLine = React.lazy(() => import("@/pages/charts/Line.jsx"));
 const LQPie = React.lazy(() => import("@/pages/charts/Pie.jsx"));
 
+// 导入三级路由组件
+const LQGoodsHome = React.lazy(() => import("@/pages/goods/c-cpns/Home.jsx"));
+const LQGoodsAddUpdata = React.lazy(() =>
+  import("@/pages/goods/c-cpns/AddUpdata.jsx")
+);
+const LQGoodsDetail = React.lazy(() =>
+  import("@/pages/goods/c-cpns/Detail.jsx")
+);
+
 // 创建路由规则
 const routes = [
   {
@@ -45,7 +54,22 @@ const routes = [
       },
       {
         path: "/admin/goods",
-        component: LQGoods
+        component: LQGoods,
+        routes: [
+          {
+            path: "/admin/goods",
+            exact: true,
+            component: LQGoodsHome
+          },
+          {
+            path: "/admin/goods/addupdata",
+            component: LQGoodsAddUpdata
+          },
+          {
+            path: "/admin/goods/detail",
+            component: LQGoodsDetail
+          }
+        ]
       },
       {
         path: "/admin/role",
