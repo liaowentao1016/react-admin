@@ -10,7 +10,12 @@ const { SubMenu } = Menu;
 
 const LeftNav = memo(function LeftNav(props) {
   // state and props
-  const { pathname } = props.location; // 获取当前路由
+  let { pathname } = props.location; // 获取当前路由
+  // 判断pathname是否以'/admin/goods'开头
+  if (pathname.indexOf("/admin/goods") === 0) {
+    // 此时说明当前路由是商品管理 或者 商品管理的子路由
+    pathname = "/admin/goods";
+  }
   let openKeys = []; // 当前展开的SubMenu菜单项key数组
   // hooks
 
@@ -27,7 +32,9 @@ const LeftNav = memo(function LeftNav(props) {
           </Menu.Item>
         );
       } else {
-        const index = item.children.findIndex(iten => iten.key === pathname);
+        const index = item.children.findIndex(
+          iten => pathname.indexOf(iten.key) === 0
+        );
         if (index !== -1) {
           openKeys.push(item.key);
         }
