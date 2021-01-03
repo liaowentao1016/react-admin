@@ -95,3 +95,62 @@ export const reqAddOrEditGood = data => {
     data
   });
 };
+
+// 获取角色列表
+export const reqRoleList = () => {
+  return request({
+    url: "/manage/role/list"
+  });
+};
+
+// 添加角色
+export const reqAddRole = roleName => {
+  return request({
+    url: "/manage/role/add",
+    method: "POST",
+    data: { roleName }
+  });
+};
+
+// 更新角色权限
+export const reqUpdataAuth = data => {
+  return request({
+    url: "/manage/role/update",
+    method: "POST",
+    data
+  });
+};
+
+// 获取用户列表
+export const reqUsers = () => {
+  return request({
+    url: "/manage/user/list"
+  });
+};
+
+// 删除用户
+export const reqDeleteUser = userId => {
+  return request({
+    url: "/manage/user/delete",
+    method: "POST",
+    data: { userId }
+  });
+};
+
+// 添加用户
+export const reqAddUser = data => {
+  return request({
+    url: "/manage/user/add",
+    method: "POST",
+    data
+  });
+};
+
+// 修改用户
+export const reqEditUser = data => {
+  return request({
+    url: "/manage/user/update",
+    method: "POST",
+    data
+  });
+};

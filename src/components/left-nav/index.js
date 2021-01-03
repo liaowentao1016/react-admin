@@ -5,6 +5,7 @@ import "./index.less";
 import { Menu } from "antd";
 
 import { menuList } from "@/utils/local-data";
+import { getUser } from "@/utils/storage";
 
 const { SubMenu } = Menu;
 
@@ -23,30 +24,51 @@ const LeftNav = memo(function LeftNav(props) {
   // 定义根据menuList获取对应的ReactNode的方法
   const getMenuListNode = menuList => {
     return menuList.map(item => {
-      if (!item.children) {
-        return (
-          <Menu.Item key={item.key} icon={item.icon}>
-            <Link to={item.key}>
-              <span>{item.title}</span>
-            </Link>
-          </Menu.Item>
-        );
-      } else {
-        const index = item.children.findIndex(
-          iten => pathname.indexOf(iten.key) === 0
-        );
-        if (index !== -1) {
-          openKeys.push(item.key);
+      if (hasAuth(item)) {
+        if (!item.children) {
+          return (
+            <Menu.Item key={item.key} icon={item.icon}>
+              <Link to={item.key}>
+                <span>{item.title}</span>
+              </Link>
+            </Menu.Item>
+          );
+        } else {
+          const index = item.children.findIndex(
+            iten => pathname.indexOf(iten.key) === 0
+          );
+          if (index !== -1) {
+            openKeys.push(item.key);
+          }
+          return (
+            <SubMenu key={item.key} title={item.title} icon={item.icon}>
+              {getMenuListNode(item.children)}
+            </SubMenu>
+          );
         }
-        return (
-          <SubMenu key={item.key} title={item.title} icon={item.icon}>
-            {getMenuListNode(item.children)}
-          </SubMenu>
-        );
       }
     });
   };
 
+  // 定义函数 判断当前登录用户是否对item有权限 有则渲染该item 没有则不渲染该item
+  const hasAuth = item => {
+    const { username, role } = getUser();
+    // admin用户对所有item都有权限
+    // 公开的item也就是isPublic为true的item直接渲染
+    // item的key值 在 当前登录用户的权限数组中 则渲染该item
+    if (
+      username === "admin" ||
+      item.isPublic ||
+      role.menus.indexOf(item.key) !== -1
+    ) {
+      return true;
+    } else if (item.children) {
+      // 如果当前用户有某个item的子item的权限 也应该将它渲染出来
+      return !!item.children.find(
+        child => role.menus.indexOf(child.key) !== -1
+      ); // !!强制转换为Boole类型
+    }
+  };
   // 返回的jsx
   return (
     <div className="left-nav">

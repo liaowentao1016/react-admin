@@ -52,7 +52,9 @@ const LQHeader = memo(function LQHeader(props) {
         title = item.title;
         break;
       } else if (item.children) {
-        const cItem = item.children.find(cItem => cItem.key === pathname);
+        const cItem = item.children.find(
+          cItem => pathname.indexOf(cItem.key) === 0
+        );
         if (cItem) {
           title = cItem.title;
           break;
