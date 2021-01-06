@@ -24,6 +24,9 @@ const LQGoodsDetail = React.lazy(() =>
   import("@/pages/goods/c-cpns/Detail.jsx")
 );
 
+// 导入404组件
+const LQNotFound = React.lazy(() => import("@/pages/not-found/NotFound.jsx"));
+
 // 创建路由规则
 const routes = [
   {
@@ -92,9 +95,12 @@ const routes = [
         component: LQPie
       },
       {
-        render: () => <Redirect to="/admin/home" />
+        component: LQNotFound
       }
     ]
+  },
+  {
+    component: LQNotFound
   }
 ];
 
