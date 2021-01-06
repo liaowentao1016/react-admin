@@ -1,5 +1,7 @@
 import React, { memo } from "react";
 
+import { useSelector } from "react-redux";
+
 import { renderRoutes } from "react-router-config";
 
 import { Layout } from "antd";
@@ -10,6 +12,10 @@ import LQHeader from "@/components/header";
 const { Footer, Sider, Content } = Layout;
 
 export default memo(function Admin(props) {
+  const currentUser = useSelector(state => state.currentUser);
+  if (!currentUser._id) {
+    props.history.replace("/login");
+  }
   return (
     <Layout style={{ height: "100%" }}>
       <Sider>

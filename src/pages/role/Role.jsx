@@ -1,9 +1,12 @@
 import React, { memo, useEffect, useState } from "react";
 
+import { useSelector, useDispatch } from "react-redux";
+
+import { logoutAction } from "@/store/actionCreators";
+
 import { reqRoleList, reqAddRole, reqUpdataAuth } from "@/api";
 import { formatDate } from "@/utils/formatDate";
 import { menuList } from "@/utils/local-data";
-import { getUser, removeUser } from "@/utils/storage";
 
 import { Card, Table, Button, Modal, Form, Input, message, Tree } from "antd";
 
@@ -51,6 +54,9 @@ export default memo(function LQRole(props) {
     }
   }, [currentRole]);
 
+  const currentUser = useSelector(state => state.currentUser);
+  const dispatch = useDispatch();
+
   // handle
   async function getRoleList() {
     const res = await reqRoleList();
@@ -87,18 +93,16 @@ export default memo(function LQRole(props) {
       _id: currentRole._id,
       menus: treeCheckedKeys,
       auth_time: Date.now(),
-      auth_name: getUser().username
+      auth_name: currentUser.username
     };
     // 发送请求
     const res = await reqUpdataAuth(data);
     // 判断结果成功与否
     if (res && res.status === 0) {
       // 判断当年登录用户的角色权限 是否被修改 若被修改则强制用户退出重新登录
-      if (getUser().role_id === currentRole._id) {
-        // 清除当前用户信息
-        removeUser();
-        // 跳转到登录页面
-        props.history.replace("/login");
+      if (currentUser.role_id === currentRole._id) {
+        // 派发退出登录的action
+        dispatch(logoutAction());
         // 提示
         message.success("当前登录用户的角色权限被修改，请重新登录");
       } else {

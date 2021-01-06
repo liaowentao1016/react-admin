@@ -1,11 +1,15 @@
 import React, { memo } from "react";
+
+import { useDispatch, useSelector } from "react-redux";
+
+import { changeHeaderTitleAction } from "@/store/actionCreators";
+
 import { Link, withRouter } from "react-router-dom";
 import "./index.less";
 
 import { Menu } from "antd";
 
 import { menuList } from "@/utils/local-data";
-import { getUser } from "@/utils/storage";
 
 const { SubMenu } = Menu;
 
@@ -18,7 +22,13 @@ const LeftNav = memo(function LeftNav(props) {
     pathname = "/admin/goods";
   }
   let openKeys = []; // 当前展开的SubMenu菜单项key数组
+
   // hooks
+  const dispatch = useDispatch();
+  const currentUser = useSelector(state => state.currentUser);
+  const username = currentUser.username || "";
+  const role = currentUser.role || {};
+  const menus = role.menus || [];
 
   // handle
   // 定义根据menuList获取对应的ReactNode的方法
@@ -26,8 +36,18 @@ const LeftNav = memo(function LeftNav(props) {
     return menuList.map(item => {
       if (hasAuth(item)) {
         if (!item.children) {
+          // 给redux中的headerTitle设置一个初始值 初始值为当前选中的item的title
+          if (item.key === pathname || pathname.indexOf(item.key) === 0) {
+            dispatch(changeHeaderTitleAction(item.title));
+          }
           return (
-            <Menu.Item key={item.key} icon={item.icon}>
+            <Menu.Item
+              key={item.key}
+              icon={item.icon}
+              onClick={() => {
+                dispatch(changeHeaderTitleAction(item.title));
+              }}
+            >
               <Link to={item.key}>
                 <span>{item.title}</span>
               </Link>
@@ -52,21 +72,18 @@ const LeftNav = memo(function LeftNav(props) {
 
   // 定义函数 判断当前登录用户是否对item有权限 有则渲染该item 没有则不渲染该item
   const hasAuth = item => {
-    const { username, role } = getUser();
     // admin用户对所有item都有权限
     // 公开的item也就是isPublic为true的item直接渲染
     // item的key值 在 当前登录用户的权限数组中 则渲染该item
     if (
       username === "admin" ||
       item.isPublic ||
-      role.menus.indexOf(item.key) !== -1
+      menus.indexOf(item.key) !== -1
     ) {
       return true;
     } else if (item.children) {
       // 如果当前用户有某个item的子item的权限 也应该将它渲染出来
-      return !!item.children.find(
-        child => role.menus.indexOf(child.key) !== -1
-      ); // !!强制转换为Boole类型
+      return !!item.children.find(child => menus.indexOf(child.key) !== -1); // !!强制转换为Boole类型
     }
   };
   // 返回的jsx

@@ -1,16 +1,25 @@
 import React, { memo } from "react";
 
+import { useDispatch, useSelector } from "react-redux";
+
+import { loginAction } from "@/store/actionCreators";
+
 import "./login.less";
 
-import { reqLogin } from "@/api";
-
-import { saveUser } from "@/utils/storage";
-
-import { Form, Input, Button, message } from "antd";
+import { Form, Input, Button } from "antd";
 
 export default memo(function Login(props) {
   // 获取表单实例对象
   const [form] = Form.useForm();
+
+  // react-redux hooks
+  const dispatch = useDispatch();
+  const currentUser = useSelector(state => state.currentUser);
+
+  if (currentUser && currentUser._id) {
+    props.history.replace("/admin/home");
+  }
+
   // 自定义密码的验证规则
   function validatorPwd(rule, value) {
     if (value === undefined || value.length === 0) {
@@ -27,23 +36,10 @@ export default memo(function Login(props) {
   }
   // 验证通过 提交表单
   async function onFinish(values) {
-    // 发送网络请求
-    const res = await reqLogin(values);
-    if (res.status === 0) {
-      // 提示用户登录成功
-      message.success("登录成功");
-      // 将当前用户信息保存在localstorage中
-      saveUser(res.data);
-      // 跳转到首页
-      props.history.replace("/admin");
-    } else {
-      message.error(res.msg);
-    }
+    // 派发action 交给redux处理
+    dispatch(loginAction(values));
   }
-  // 验证不通过
-  function onFinishFailed() {
-    message.error("请输入正确的用户名和密码");
-  }
+
   // 返回的jsx
   return (
     <div className="login">
@@ -58,7 +54,6 @@ export default memo(function Login(props) {
           labelCol={{ span: 6 }}
           wrapperCol={{ span: 18 }}
           onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
           form={form}
           initialValues={{
             username: "admin",
